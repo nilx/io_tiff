@@ -31,7 +31,8 @@ int main()
     float *img = NULL;
 
     /* read the image */
-    img = read_tiff_f32("in.tiff", &nx, &ny, &nc);
+    img = read_tiff_f32_gray("in.tiff", &nx, &ny);
+    nc = 1;
 
     /* if img == NULL, there was an error while reading */
     if (NULL == img)
@@ -44,49 +45,12 @@ int main()
     printf("image size : %i x %i, %i channels\n",
            (int) nx, (int) ny, (int) nc);
 
-    /*
-     * from now on we suppose the image has RGB channels
-     * this can be forced by using
-     * read_tiff_f32_rgb() instead of read_tiff_f32()
-     */
-
-    if (3 <= nc)
     {
-        /*
-         * the img array layout is RRRR...GGGG...BBBB...
-         * pointers can be set for direct access to each channel
-         */
-
-        float *img_r = img;     /* red channel pointer */
-        float *img_g = img + nx * ny;   /* green channel pointer */
-        float *img_b = img + 2 * nx * ny;       /* blue channel pointer */
-
-        /* let's access the 3 components of the pixel (27, 42) */
+        /* let's access the pixel (27, 42) */
         size_t x = 27;
         size_t y = 42;
-        printf("the RGB components of the pixel (%i, %i) are ",
-               (int) x, (int) y);
-        printf("R: %f G: %f B: %f\n",
-               img_r[x + nx * y], img_g[x + nx * y], img_b[x + nx * y]);
-
-        /*
-         * you can also copy/split the channels into 3 arrays
-         */
-
-        /* allocate the memory space */
-        img_r = (float *) malloc(nx * ny * sizeof(float));
-        img_g = (float *) malloc(nx * ny * sizeof(float));
-        img_b = (float *) malloc(nx * ny * sizeof(float));
-
-        /* copy each channel */
-        memcpy(img_r, img, nx * ny * sizeof(float));
-        memcpy(img_g, img + nx * ny, nx * ny * sizeof(float));
-        memcpy(img_b, img + 2 * nx * ny, nx * ny * sizeof(float));
-
-        /* and do stuff with on the image arrays... */
-        free(img_r);
-        free(img_g);
-        free(img_b);
+        printf("the pixel (%i, %i) is %f\n",
+               (int) x, (int) y, img[x + nx * y]);
     }
 
     /* write the image */
@@ -95,20 +59,6 @@ int main()
         fprintf(stderr, "failed to write the image out.tiff\n");
         abort();
     }
-    free(img);
-
-    /*
-     * you can also use special read functions
-     * to handle colorspace
-     * conversion
-     */
-    /* read as RGB, and save */
-    img = read_png_f32_tiff("in.tiff", &nx, &ny);
-    write_tiff_f32("out_rgb.tiff", img, nx, ny, 3);
-    free(img);
-    /* read as gray, and save */
-    img = read_tiff_f32_gray("in.tiff", &nx, &ny);
-    write_tiff_f32("out_gray.tiff", img, nx, ny, 1);
     free(img);
 
     return EXIT_SUCCESS;

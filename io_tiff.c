@@ -38,6 +38,9 @@
 
 #include "io_tiff.h"
 
+/* string tag inserted into the binary, helps tracking versions */
+char _io_tiff_tag[] = "using io_tiff " IO_TIFF_VERSION;
+
 /**
  * Read a TIFF float image.
  */
@@ -65,7 +68,7 @@ static float *readTIFF(TIFF * tif, size_t * nx, size_t * ny)
         line = data + i * w;
         if (TIFFReadScanline(tif, line, i, 0) < 0)
         {
-            fprintf(stderr, "readTIFF: error reading row %i\n", i);
+            fprintf(stderr, "readTIFF: error reading row %u\n", i);
             free(data);
             return NULL;
         }
@@ -101,9 +104,9 @@ static int writeTIFF(TIFF * tif, const float *data, size_t w, size_t h,
         for (i = 0; ok && i < h; i++)
         {
             line = (float *) (data + (i + k * h) * w);
-            if (TIFFWriteScanline(tif, line, i, k) < 0)
+            if (TIFFWriteScanline(tif, line, (uint32) i, (tsample_t) k) < 0)
             {
-                fprintf(stderr, "writeTIFF: error writing row %i\n", i);
+                fprintf(stderr, "writeTIFF: error writing row %i\n", (int) i);
                 ok = 0;
             }
         }

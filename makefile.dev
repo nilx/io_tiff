@@ -36,6 +36,7 @@ beautify.flag	: $(CSRC)
 	touch $@
 
 .PHONY	: release
-release	:
+release	: beautify lint default distclean
+	-git commit -a
 	git archive --format=tar --prefix=$(PROJECT)-$(RELEASE_TAG)/ HEAD \
 	        | gzip > ../$(PROJECT)-$(RELEASE_TAG).tar.gz
