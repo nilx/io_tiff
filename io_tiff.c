@@ -38,31 +38,33 @@
 
 #include "io_tiff.h"
 
-
 /**
  * Read a TIFF float image.
  */
-static float* readTIFF(TIFF* tif, size_t * nx, size_t * ny)
+static float *readTIFF(TIFF * tif, size_t * nx, size_t * ny)
 {
-    uint32 w=0, h=0, i;
-    uint16 spp=0, bps=0, fmt=0;
-    float * data, *line;
+    uint32 w = 0, h = 0, i;
+    uint16 spp = 0, bps = 0, fmt = 0;
+    float *data, *line;
 
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
     TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &spp);
     TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &bps);
     TIFFGetField(tif, TIFFTAG_SAMPLEFORMAT, &fmt);
-    if(spp != 1 || bps != (uint16)sizeof(float)*8 || fmt != SAMPLEFORMAT_IEEEFP)
+    if (spp != 1 || bps != (uint16) sizeof(float) * 8
+        || fmt != SAMPLEFORMAT_IEEEFP)
         return NULL;
 
-    assert((size_t)TIFFScanlineSize(tif) == w*sizeof(float));
-    data = (float*)malloc(w*h*sizeof(float));
+    assert((size_t) TIFFScanlineSize(tif) == w * sizeof(float));
+    data = (float *) malloc(w * h * sizeof(float));
     *nx = (size_t) w;
     *ny = (size_t) h;
-    for(i=0; i < h; i++) {
-        line = data + i*w;
-        if(TIFFReadScanline(tif, line, i, 0) < 0) {
+    for (i = 0; i < h; i++)
+    {
+        line = data + i * w;
+        if (TIFFReadScanline(tif, line, i, 0) < 0)
+        {
             fprintf(stderr, "readTIFF: error reading row %i\n", i);
             free(data);
             return NULL;
@@ -75,29 +77,32 @@ static float* readTIFF(TIFF* tif, size_t * nx, size_t * ny)
 /**
  * Write a TIFF float image.
  */
-static int writeTIFF(TIFF* tif, const float* data, size_t w,size_t h,size_t c)
+static int writeTIFF(TIFF * tif, const float *data, size_t w, size_t h,
+                     size_t c)
 {
     uint32 rowsperstrip;
     int ok;
     size_t k, i;
-    float * line;
+    float *line;
 
-    TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, (uint32)w);
-    TIFFSetField(tif, TIFFTAG_IMAGELENGTH,(uint32)h);
+    TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, (uint32) w);
+    TIFFSetField(tif, TIFFTAG_IMAGELENGTH, (uint32) h);
     TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_SEPARATE);
-    TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, (uint16)c);
-    TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, (uint16)sizeof(float)*8);
+    TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, (uint16) c);
+    TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, (uint16) sizeof(float) * 8);
     TIFFSetField(tif, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_IEEEFP);
-    rowsperstrip = TIFFDefaultStripSize(tif, (uint32)h);
+    rowsperstrip = TIFFDefaultStripSize(tif, (uint32) h);
     TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
     TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
     TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 
-    ok=1;
-    for(k=0; ok && k < c; k++)
-        for(i=0; ok && i < h; i++) {
-            line = (float*) (data + (i+k*h)*w);
-            if(TIFFWriteScanline(tif, line, i, k) < 0) {
+    ok = 1;
+    for (k = 0; ok && k < c; k++)
+        for (i = 0; ok && i < h; i++)
+        {
+            line = (float *) (data + (i + k * h) * w);
+            if (TIFFWriteScanline(tif, line, i, k) < 0)
+            {
                 fprintf(stderr, "writeTIFF: error writing row %i\n", i);
                 ok = 0;
             }
@@ -108,15 +113,16 @@ static int writeTIFF(TIFF* tif, const float* data, size_t w,size_t h,size_t c)
 /**
  * Load TIFF float image.
  */
-float* read_tiff_f32_gray(const char *fname, size_t * nx, size_t * ny)
+float *read_tiff_f32_gray(const char *fname, size_t * nx, size_t * ny)
 {
-    float * data;
-    TIFF* tif = TIFFOpen(fname, "r");
-    if(! tif) {
+    float *data;
+    TIFF *tif = TIFFOpen(fname, "r");
+    if (!tif)
+    {
         fprintf(stderr, "Unable to read TIFF file %s\n", fname);
         return NULL;
     }
-    data  = readTIFF(tif, nx, ny);
+    data = readTIFF(tif, nx, ny);
     TIFFClose(tif);
     return data;
 }
@@ -124,16 +130,18 @@ float* read_tiff_f32_gray(const char *fname, size_t * nx, size_t * ny)
 /**
  * Write float image as TIFF 32 bits per sample.
  */
-int write_tiff_f32(const char *fname, const float *data, size_t nx, size_t ny, size_t nc)
+int write_tiff_f32(const char *fname, const float *data, size_t nx, size_t ny,
+                   size_t nc)
 {
     int ok;
-    TIFF* tif = TIFFOpen(fname, "w");
-    if(! tif) {
+    TIFF *tif = TIFFOpen(fname, "w");
+    if (!tif)
+    {
         fprintf(stderr, "Unable to write TIFF file %s\n", fname);
         return 0;
     }
 
     ok = writeTIFF(tif, data, nx, ny, nc);
     TIFFClose(tif);
-    return (ok? 0: -1);
+    return (ok ? 0 : -1);
 }
