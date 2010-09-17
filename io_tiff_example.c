@@ -113,3 +113,10 @@ int main()
 
     return EXIT_SUCCESS;
 }
+
+/**
+ * @mainpage io_tiff : simplified front-end to libtiff
+ *
+ * README.txt:
+ * @verbinclude README.txt
+ */
