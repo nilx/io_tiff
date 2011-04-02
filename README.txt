@@ -1,4 +1,4 @@
-% io_tiff : simplified front-end to libtiff
+% io_tiff: simplified front-end to libtiff
 
 * overview
 * license
@@ -59,7 +59,8 @@ collected via pointer parameters.
 
 The main front-end function is:
 
-* read_tiff_f32() : read a TIFF image as a float array
+* read_tiff_f32():
+  read a TIFF image as a float array
   - integer images are converted to float
 
 The function syntax is:
@@ -71,10 +72,10 @@ The function syntax is:
 > NOT IMPLEMENTED YET
 > Two secondary read functions can be used to force a color model:
 > 
-> * read_tiff_f32_rgb() : convert gray images to RGB and strip the
->   alpha channel 
-> * read_tiff_f32_gray() : convert RGB images to gray and strip the
->   alpha channel
+> * read_tiff_f32_rgb():
+>   convert gray images to RGB and strip the alpha channel 
+> * read_tiff_f32_gray():
+>   convert RGB images to gray and strip the alpha channel
 > 
 > These functions have the same syntax as the previous ones, except that
 > they don't need the &nc parameter.
@@ -86,7 +87,8 @@ the one received from the read functions.
 
 The front-end function is:
 
-* write_png_f32() : write a TIFF image from a float array
+* write_tiff_f32():
+  write a TIFF image from a float array
   - the float values are stored in a floating-point TIFF image without
     conversion
 
@@ -100,11 +102,11 @@ The function syntax is:
 
 ## EXAMPLE
 
-see io_tiff_example.c
+see example.c
 
 # COMPILATION
 
-You can compile the example code io_png_example.c using the provided
+You can compile the example code example.c using the provided
 makefile, with the `make` command.
 
 ## LOCAL LIBRARIES
@@ -117,14 +119,14 @@ build and include libtiff in your program:
    this uses the makefiles from the `libs` folder to download and
    compile libtiff, zlib and libjpeg, and builds the libraries into
    `libs/build`;
-2. use the "-DWITH_LOCAL_LIBTIFF -I./libs/build/include" options to compile
+2. use the "-DIO_TIFF_LOCAL_LIBTIFF -I./libs/build/include" options to compile
    io_tiff.c;
 3. add ./libs/build/lib/libtiff.a ./libs/build/lib/libz.a
    ./libs/build/lib/libjpeg.a to the list of files being linked into
    your program
 
 This is automatically handled in the provided makefile for the example
-code io_png_example.c; simply use the `make WITH_LOCAL_LIBS=1` command
+code example.c; simply use the `make LOCAL_LIBS=1` command
 instead of `make`.
 
 # TODO
@@ -136,7 +138,7 @@ instead of `make`.
 
 # COPYRIGHT
 
-Copyright 2010 Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+Copyright 2010-2011 Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
 
 Copying and distribution of this README file, with or without
 modification, are permitted in any medium without royalty provided

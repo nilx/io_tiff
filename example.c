@@ -1,8 +1,8 @@
 /*
- * This file shows how to use io_png.c. It is released in the public
+ * This file shows how to use io_tiff.c. It is released in the public
  * domain and as such comes with no copyright requirement.
  *
- * compile with : cc io_tiff_example.c io_tiff.c -ltiff
+ * compile with: cc example.c io_tiff.c -ltiff
  */
 
 #include <stdlib.h>
@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-/* include the io_png prototypes */
+/* include the io_tiff prototypes */
 #include "io_tiff.h"
 
 int main()
@@ -31,18 +31,17 @@ int main()
     float *img = NULL;
 
     /* read the image */
-    img = read_tiff_f32_gray("in.tiff", &nx, &ny);
+    img = io_tiff_read_f32_gray("in.tiff", &nx, &ny);
     nc = 1;
 
     /* if img == NULL, there was an error while reading */
-    if (NULL == img)
-    {
+    if (NULL == img) {
         fprintf(stderr, "failed to read the image in.tiff\n");
         abort();
     }
 
     /* nx, ny and nc hols the image sizes */
-    printf("image size : %i x %i, %i channels\n",
+    printf("image size: %i x %i, %i channels\n",
            (int) nx, (int) ny, (int) nc);
 
     {
@@ -54,8 +53,7 @@ int main()
     }
 
     /* write the image */
-    if (0 != write_tiff_f32("out.tiff", img, nx, ny, nc))
-    {
+    if (0 != io_tiff_write_f32("out.tiff", img, nx, ny, nc)) {
         fprintf(stderr, "failed to write the image out.tiff\n");
         abort();
     }
@@ -65,7 +63,7 @@ int main()
 }
 
 /**
- * @mainpage io_tiff : simplified front-end to libtiff
+ * @mainpage io_tiff: simplified front-end to libtiff
  *
  * README.txt:
  * @verbinclude README.txt

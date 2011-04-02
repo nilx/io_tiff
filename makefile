@@ -6,7 +6,7 @@
 # offered as-is, without any warranty.
 
 # source code, C language
-CSRC	= io_tiff.c io_tiff_example.c
+CSRC	= io_tiff.c example.c
 
 # source code, all languages (only C here)
 SRC	= $(CSRC)
@@ -15,7 +15,7 @@ OBJ	= $(CSRC:.c=.o)
 # binary executable program
 BIN	= example
 
-# default target : the binary executable program
+# default target: the binary executable program
 default: $(BIN)
 
 # standard C compiler optimization options
@@ -28,14 +28,14 @@ LDFLAGS	= -ltiff -lm
 LIBDEPS =
 
 # use local embedded libraries
-ifdef WITH_LOCAL_LIBS
+ifdef LOCAL_LIBS
 # library location
 LIBDIR = ./libs/build/lib
 INCDIR = ./libs/build/include
 # libtiff is required
 LIBDEPS += libtiff
 # compile options to use the local libtiff header
-CFLAGS 	+= -I$(INCDIR) -DWITH_LOCAL_LIBTIFF
+CFLAGS 	+= -I$(INCDIR) -DIO_TIFF_LOCAL_LIBTIFF
 # link options to use the local libraries
 LDFLAGS = $(LIBDIR)/libtiff.a $(LIBDIR)/libz.a $(LIBDIR)/libjpeg.a -lm
 endif
